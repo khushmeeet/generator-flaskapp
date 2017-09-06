@@ -11,15 +11,26 @@ module.exports = class extends Generator {
     ));
 
     const prompts = [{
+      type: 'input',
+      name: 'title',
+      message: 'Title of your Flask application',
+      default: 'app'
+    }, {
       type: 'confirm',
-      name: 'someAnswer',
-      message: 'Would you like to enable this option?',
-      default: true
+      name: 'enable_wtf',
+      message: 'Install Flask WTForms',
+      default: false
+    }, {
+      type: 'confirm',
+      name: 'enable_login',
+      message: 'Install Flask Login',
+      default: false
     }];
 
     return this.prompt(prompts).then(props => {
       // To access props later use this.props.someAnswer;
-      this.props = props;
+      this.log('Your title', props.title);
+      this.log('wtf', props.enable_wtf);
     });
   }
 
@@ -31,6 +42,16 @@ module.exports = class extends Generator {
   }
 
   install() {
-    this.installDependencies();
+    this.spawnCommand('virtualenv', [this.props.title]);
+    this.spawnCommand('source', [this.props.title + '/bin/activate']);
+    this.spawnCommand('pip', ['install', 'flask', 'gunicorn']);
+    if (this.props.enable_wtf) {
+      this.spawnCommand('pip', ['install', 'flask-WTF']);
+    }
+    if (this.props.enable_login) {
+      this.spawnCommand('pip', ['install', 'flask-login']);
+    }
+    this.spawnCommand('pip', ['freeze', '>', 'requirements.txt']);
+    // this.installDependencies();
   }
 };
