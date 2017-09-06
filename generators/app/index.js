@@ -7,7 +7,8 @@ module.exports = class extends Generator {
   prompting() {
     // Have Yeoman greet the user.
     this.log(yosay(
-      'Welcome to the breathtaking ' + chalk.red('generator-flaskapp') + ' generator!'
+      'Welcome to the breathtaking ' + chalk.red('generator-flaskapp') + ' generator!\n' +
+      'Run this generator in the folder where your app will be created.'
     ));
 
     const prompts = [{
@@ -35,9 +36,46 @@ module.exports = class extends Generator {
   }
 
   writing() {
+    // Config files
     this.fs.copy(
-      this.templatePath('dummyfile.txt'),
-      this.destinationPath('dummyfile.txt')
+      this.templatePath('runtime.txt'),
+      this.destinationPath('runtime.txt')
+    );
+    this.fs.copy(
+      this.templatePath('run.py'),
+      this.destinationPath('run.py')
+    );
+    this.fs.copy(
+      this.templatePath('Procfile'),
+      this.destinationPath('Procfile')
+    );
+    this.fs.copy(
+      this.templatePath('.gitignore'),
+      this.destinationPath('.gitignore')
+    );
+
+    // App files
+    this.fs.copy(
+      this.templatePath('app/home/*.py'),
+      this.destinationPath('app/home/*.py')
+    );
+    this.fs.copy(
+      this.templatePath('app/static/style.css'),
+      this.destinationPath('app/static/style.css')
+    );
+    this.fs.copy(
+      this.templatePath('app/templates/home/'),
+      this.destinationPath('app/templates/home/')
+    );
+    this.fs.copyTpl(
+      this.templatePath('app/templates/base.html'),
+      this.destinationPath('app/templates/base.html'),
+      {title: this.props.title}
+    );
+    this.fs.copyTpl(
+      this.templatePath('app/*.py'),
+      this.destinationPath('app/*.py'),
+      {title: this.props.title}
     );
   }
 
@@ -52,6 +90,5 @@ module.exports = class extends Generator {
       this.spawnCommand('pip', ['install', 'flask-login']);
     }
     this.spawnCommand('pip', ['freeze', '>', 'requirements.txt']);
-    // this.installDependencies();
   }
 };
