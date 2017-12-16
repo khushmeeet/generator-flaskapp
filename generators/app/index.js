@@ -16,22 +16,11 @@ module.exports = class extends Generator {
       name: 'title',
       message: 'Title of your Flask application',
       default: 'app'
-    }, {
-      type: 'confirm',
-      name: 'enable_wtf',
-      message: 'Install Flask WTForms',
-      default: false
-    }, {
-      type: 'confirm',
-      name: 'enable_login',
-      message: 'Install Flask Login',
-      default: false
     }];
 
     return this.prompt(prompts).then(props => {
-      // To access props later use this.props.someAnswer;
+      this.props = props;
       this.log('Your title', props.title);
-      this.log('wtf', props.enable_wtf);
     });
   }
 
@@ -56,12 +45,20 @@ module.exports = class extends Generator {
 
     // App files
     this.fs.copy(
-      this.templatePath('app/home/*.py'),
-      this.destinationPath('app/home/*.py')
+      this.templatePath('app/home/__init__.py'),
+      this.destinationPath('app/home/__init__.py')
+    );
+    this.fs.copy(
+      this.templatePath('app/home/views.py'),
+      this.destinationPath('app/home/views.py')
     );
     this.fs.copy(
       this.templatePath('app/static/style.css'),
       this.destinationPath('app/static/style.css')
+    );
+    this.fs.copy(
+      this.templatePath('app/static/icon.png'),
+      this.destinationPath('app/static/icon.png')
     );
     this.fs.copy(
       this.templatePath('app/templates/home/'),
@@ -73,22 +70,18 @@ module.exports = class extends Generator {
       {title: this.props.title}
     );
     this.fs.copyTpl(
-      this.templatePath('app/*.py'),
-      this.destinationPath('app/*.py'),
+      this.templatePath('app/__init__.py'),
+      this.destinationPath('app/__init__.py')
+    );
+    this.fs.copy(
+      this.templatePath('app/setup.py'),
+      this.destinationPath('app/setup.py'),
       {title: this.props.title}
     );
   }
 
   install() {
-    this.spawnCommand('virtualenv', [this.props.title]);
-    this.spawnCommand('source', [this.props.title + '/bin/activate']);
-    this.spawnCommand('pip', ['install', 'flask', 'gunicorn']);
-    if (this.props.enable_wtf) {
-      this.spawnCommand('pip', ['install', 'flask-WTF']);
-    }
-    if (this.props.enable_login) {
-      this.spawnCommand('pip', ['install', 'flask-login']);
-    }
-    this.spawnCommand('pip', ['freeze', '>', 'requirements.txt']);
+    this.spawnCommand('pip', ['install', 'flask', 'gunicorn', 'pipreqs']);
+    this.spawnCommand('pipreqs', ['.']);
   }
 };
