@@ -50,6 +50,7 @@ Each module in this folder structure is organised as a flask blueprint (eg. home
 
 * Addition of sub-generators
 * More prompts (eg. Flask-WTF)
+* Write tests
 
 ## License
 
