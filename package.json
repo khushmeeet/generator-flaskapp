@@ -1,6 +1,6 @@
 {
   "name": "generator-flaskapp",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Yeoman generator to scaffold a flask project",
   "homepage": "https://github.com/Khushmeet/generator-flask",
   "author": {
